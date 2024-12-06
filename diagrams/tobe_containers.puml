@@ -1,0 +1,36 @@
+@startuml
+!include с4/C4_Context.puml
+!include с4/C4_Container.puml
+!include с4/C4_Component.puml
+!include с4/C4_Deployment.puml
+
+top to bottom direction
+
+title WarmHouse System Components Diagram
+
+Person(support, "Support")
+Person(user, "User")
+
+System(frontend, "Frontend", "React")
+
+Container_Boundary(WarmHouseSystem, "WarmHouse System"){
+    System(api_application, "API application", "Python/FastAPI")
+
+    System(database, "Database", "Postgre")
+    System(broker, "Broker", "Kafka")
+}
+
+System_Ext(notification, "Notification System")
+System_Ext(analysis, "Analysis System")
+
+Rel(user, frontend, "request", "Https")
+Rel(support, frontend, "request", "Https")
+Rel(frontend, api_application, "request", "Https")
+
+Rel(api_application, database, "messages", "json")
+Rel(api_application, broker, "messages", "json")
+
+Rel(database, analysis, "messages", "json")
+Rel(broker, notification, "messages", "json")
+
+@enduml

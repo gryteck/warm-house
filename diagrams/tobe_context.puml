@@ -1,0 +1,25 @@
+@startuml
+!include с4/C4_Context.puml
+!include с4/C4_Container.puml
+!include с4/C4_Component.puml
+!include с4/C4_Deployment.puml
+
+top to bottom direction
+
+title WarmHouse System Context Diagram
+
+Person(support, "Support")
+Person(user, "User")
+
+System(system, "Warm House System")
+
+System_Ext(notification, "Notification System")
+System_Ext(analysis, "Analysis System")
+
+Rel(user, system, "request", "Https")
+Rel(support, system, "request", "Https")
+
+Rel(system, analysis, "messages", "json")
+Rel(system, notification, "messages", "json")
+
+@enduml

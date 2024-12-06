@@ -1,0 +1,38 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+autonumber
+
+actor User
+participant API_Gateway
+participant AuthService
+participant DeviceService
+queue Kafka
+participant MonitoringSystem
+database Postgre
+participant AnalysisSystem
+participant NotificationSystem
+
+User -> API_Gateway: Write Request from device
+API_Gateway --> AuthService: Authentication Request
+AuthService -> API_Gateway: Response {200}
+API_Gateway -> DeviceService: Request
+DeviceService -> Kafka: messsage
+DeviceService -> API_Gateway: Response {200}
+API_Gateway -> User: Response {200}
+MonitoringSystem --> Kafka: listen
+Kafka -> MonitoringSystem: Message
+MonitoringSystem -> Postgre: write query
+Postgre -> AnalysisSystem
+NotificationSystem --> Kafka: listen
+Kafka -> NotificationSystem: Message
+NotificationSystem -> User: Email
+
+User -> API_Gateway: Read Request from device
+API_Gateway --> AuthService: Authentication Request
+AuthService -> API_Gateway: Response {200}
+API_Gateway -> MonitoringSystem: Request
+MonitoringSystem -> Postgre: read query
+MonitoringSystem -> API_Gateway: Response {json}
+API_Gateway -> User: Response {data}
+
+@enduml
