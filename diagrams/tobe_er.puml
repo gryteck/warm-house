@@ -1,0 +1,58 @@
+@startuml
+class User {
+  +id: uuid <<PK>>
+  +name: str
+  +email: str
+}
+
+class UserHome {
+  +id: uuid <<PK>>
+  +user_id: uuid <<FK>> // FK: User.id
+  +home_id: uuid <<FK>> // FK: Home.id
+}
+
+class Home {
+  +id: uuid <<PK>>
+  +name: str
+  +address: str
+  +status: str
+}
+
+class Device {
+  +id: uuid <<PK>>
+  +type_id: uuid <<FK>> // FK: DeviceType.id
+  +home_id: uuid <<FK>> // FK: Home.id
+  +name: str
+  +serial_number: str
+  +status: str
+}
+
+class DeviceType {
+  +id: uuid <<PK>>
+  +name: str
+  +params: json
+}
+
+class Telemetry {
+  +id: uuid <<PK>>
+  +device_id: uuid <<FK>> // FK: Device.id
+  +indicator_type: enum
+  +value: str
+  +date: datetime
+}
+
+'// Relationship between User and UserHome
+User "1" -- "0..*" UserHome : user_id
+
+'// Relationship between UserHome and Home
+UserHome "0..*" -- "1" Home : home_id
+
+'// Relationship between Home and Device
+Home "1" -- "0..*" Device : home_id
+
+'// Relationship between Device and DeviceType
+Device "0..*" -- "1" DeviceType : type_id
+
+'// Relationship between Device and Telemetry
+Device "1" -- "0..*" Telemetry : device_id
+@enduml

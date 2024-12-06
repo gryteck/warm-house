@@ -1,0 +1,43 @@
+@startuml
+!include с4/C4_Context.puml
+!include с4/C4_Container.puml
+!include с4/C4_Component.puml
+!include с4/C4_Deployment.puml
+
+top to bottom direction
+
+title Device Service Code Diagram
+
+Container_Boundary(WarmHouseSystem, "WarmHouse System") {
+    Container_Boundary(DeviceService, "Device Service"){
+        System(device_routers, "Device routers")
+        System(telemetry_routers, "Telemetry routers")
+
+        System(device_model, "Device model")
+        System(telemetry_model, "Telemetry model")
+
+        System(device_service, "Device routers")
+        System(telemetry_service, "Telemetry routers")
+
+        System(device_crud, "Device crud")
+        System(telemetry_crud, "Telemetry crud")
+
+    }
+
+    System(broker, "Broker", "Kafka")
+    System(database, "Database", "Postgres")
+}
+
+Rel(device_routers, device_model, "call", "pydantic model")
+Rel(telemetry_routers, telemetry_model, "call", "pydantic model")
+
+Rel(device_model, device_service, "call", "dict")
+Rel(telemetry_model, telemetry_service, "call", "dict")
+
+Rel(device_service, device_crud, "call", "dict")
+Rel(telemetry_service, telemetry_crud, "call", "dict")
+
+Rel(device_crud, database, "query", "json")
+Rel(telemetry_crud, broker, "message", "json")
+
+@enduml

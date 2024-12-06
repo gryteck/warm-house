@@ -1,0 +1,53 @@
+@startuml
+!include с4/C4_Context.puml
+!include с4/C4_Container.puml
+!include с4/C4_Component.puml
+!include с4/C4_Deployment.puml
+
+top to bottom direction
+
+title WarmHouse System Components Diagram
+
+Person(support, "Support")
+Person(user, "User")
+
+System(frontend, "Frontend", "React")
+
+Container_Boundary(WarmHouseSystem, "WarmHouse System") {
+    Container_Boundary(api_gateway_block, "API GATEWAY"){
+        System(api_gateway, "API gateway", "NGINX")
+        System(auth, "Auth service", "Python/FastAPI")
+        System(profile, "Profile service", "Python/FastAPI")
+        System(database1, "Database", "Postgre")
+    }
+
+    System(device, "Device Service", "Python/FastAPI")
+    System(monitoring, "Monitoring Service", "Python/FastAPI")
+
+    System(broker, "Broker", "Kafka")
+    System(database2, "Database", "Postgre")
+}
+
+System_Ext(notification, "Notification Service")
+System_Ext(analysis, "Analysis Service")
+
+Rel(user, frontend, "request", "Https")
+Rel(support, frontend, "request", "Https")
+Rel(frontend, api_gateway, "request", "Https")
+
+Rel(api_gateway, auth, "request", "Https")
+Rel(api_gateway, profile, "request", "Https")
+Rel(auth, database1, "query", "Https")
+Rel(profile, database1, "query", "Https")
+
+Rel(api_gateway, device, "request", "Https")
+Rel(api_gateway, monitoring, "request \n GET", "Https")
+
+Rel(broker, monitoring, "message \n POST", "json")
+Rel(monitoring, database2, "query", "Https")
+Rel(device, broker, "request", "Https")
+Rel(device, database2, "query", "Https")
+Rel(database2, analysis, "message", "json")
+Rel(broker, notification, "message", "json")
+
+@enduml

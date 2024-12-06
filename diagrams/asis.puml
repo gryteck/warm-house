@@ -1,0 +1,22 @@
+@startuml
+!include с4/C4_Context.puml
+!include с4/C4_Container.puml
+!include с4/C4_Component.puml
+!include с4/C4_Deployment.puml
+
+LAYOUT_LANDSCAPE()
+
+Person(user, "User")
+Person(support, "Support")
+
+System(frontend, "Frontend")
+
+System(backend, "Smart Home Monolith", "Java/PostgreSQL", "")
+
+System_Ext(device, "Датчик температуры")
+
+Rel(user, frontend, "отслеживает температуру\n управляет отоплением", "HTTPS")
+Rel(support, frontend, "Подключает новые модули", "HTTPS")
+Rel(frontend, backend, "Использует", "HTTPS")
+Rel(backend, device, "Включает/выключает устройство,\n устанавливает целевую температуру,\nполучает текущую температуру")
+@enduml
